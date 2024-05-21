@@ -9,8 +9,14 @@ The repository consists of the following files:
 - Source code for mobile application
 - Complete dataset, with multiple verisions
 
+
+
 This project was done by the following team members:
+
 Adnan Idress
+
 Ari Ahmed Sheker
+
 Fehzan Ahmed
+
 Jamil Salat
