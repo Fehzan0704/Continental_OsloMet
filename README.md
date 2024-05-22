@@ -1,4 +1,4 @@
-# Continental_OsloMet
+# Continental & OsloMet
 
 This is the source code for our bachelors group project in colloboration with Continental tires. We sincerly appriciate the guidance and help from our supervisors internally and from the company, in particular Haroon Khan from OsloMet, and Anton Belfrage from Continental.
 
@@ -7,7 +7,7 @@ The repository consists of the following files:
 - Spreadsheets of training data
 - Folder from different model versions
 - Source code for mobile application
-- Complete dataset, with multiple verisions
+- Complete dataset, with multiple versions
 
 
 
