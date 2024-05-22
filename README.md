@@ -4,9 +4,10 @@ This is the source code for our bachelors group project in colloboration with Co
 
 The repository consists of the following files:
 - Code for training the models used in the mobile application
+- Code to transfer PyTorch model to PyTorch mobile
+  Code for mobile application
 - Spreadsheets of training data
 - Folder from different model versions
-- Source code for mobile application
 - Complete dataset, with multiple versions
 
 
