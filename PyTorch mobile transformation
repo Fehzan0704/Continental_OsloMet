@@ -1,0 +1,59 @@
+import torch
+import torchvision
+from torch import nn
+from torch.utils.mobile_optimizer import optimize_for_mobile
+
+# Paths and filenames
+model_path = '' # Path to .pth file 
+output_folder = '' # Folder where new versions will be saved
+output_model_name = 'TireDepthMeasurment'
+
+# Define the custom CNNResNet model class based on the provided script
+class CNNResNet(nn.Module):
+    def __init__(self, resnet_version=34):
+        super(CNNResNet, self).__init__()
+
+        model_function = getattr(torchvision.models, f'resnet{resnet_version}')
+        model_weights = getattr(torchvision.models, f'ResNet{resnet_version}_Weights').IMAGENET1K_V1
+        resnet = model_function(weights=model_weights)
+        # Extract features from ResNet
+        self.resnet_features = nn.Sequential(*list(resnet.children())[:-1])
+        # Add additional layers for regression
+        if resnet_version in [18, 34]:
+            self.fc = nn.Linear(512, 1)
+        elif resnet_version in [50]:
+            self.fc = nn.Linear(2048, 1)
+        else:
+            print("Unsupported resnet model chosen")
+
+    def forward(self, x):
+        # Extract features using ResNet
+        features = self.resnet_features(x)
+        # Flatten the features
+        features = torch.flatten(features, 1)
+        # Apply additional layers for regression
+        output = self.fc(features)
+        return output
+
+scripted_model_filename = f'{output_model_name}.pt'
+optimized_model_filename = f'{output_model_name}.ptl'
+
+# Reconstruct the model architecture
+model = CNNResNet(resnet_version=34)  # Ensure this matches the version used in your training
+
+# Load the model state dictionary
+model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
+model.eval()
+
+# Script the model using TorchScript
+scripted_model = torch.jit.script(model)
+scripted_model_save_path = output_folder + scripted_model_filename
+torch.jit.save(scripted_model, scripted_model_save_path)
+
+# Optimize the scripted model for mobile
+optimized_model = optimize_for_mobile(scripted_model)
+optimized_model_save_path = output_folder + optimized_model_filename
+optimized_model._save_for_lite_interpreter(optimized_model_save_path)
+
+print(f"Scripted model saved as: {scripted_model_save_path}")
+print(f"Optimized model for mobile saved as: {optimized_model_save_path}")
