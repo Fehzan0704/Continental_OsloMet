@@ -1,0 +1,559 @@
+'''from google.colab import drive
+drive.mount('/content/drive')
+
+!pip install captum
+'''
+
+# Uncomment the above to install dependencies and mount Google Drive if you are training on Google Colab. 
+
+import os
+import pandas as pd
+from sklearn.model_selection import train_test_split
+import torch
+import torchvision
+from torch import nn, optim
+from torch.utils.data import Dataset, DataLoader
+from torchvision import transforms
+from torchvision.models import ResNet18_Weights
+from torchvision.models import ResNet34_Weights
+from torchvision.models import ResNet50_Weights
+from torch.optim.lr_scheduler import ReduceLROnPlateau
+from PIL import Image
+import matplotlib.pyplot as plt
+import numpy as np
+from captum.attr import GuidedGradCam
+from captum.attr import visualization as viz
+import warnings
+import albumentations as A
+from albumentations.pytorch import ToTensorV2
+import cv2
+import xml.etree.ElementTree as ET
+
+# Filter Captum's UserWarning
+warnings.filterwarnings("ignore", category=UserWarning, module="captum")
+
+# Paths to dataset and labels
+dataset_path = '/content/drive/MyDrive/Bachelorprosjekt - Continental/LAST/Dataset/Single angle - FULL'
+multi_angle_dataset_path = '/content/drive/MyDrive/Bachelorprosjekt - Continental/LAST/Dataset/Multi angle - FULL'
+labels_path = '/content/drive/MyDrive/Bachelorprosjekt - Continental/LAST/Dataset/Datasett.xlsx'
+filtered_labels_path = '/content/drive/MyDrive/Bachelorprosjekt - Continental/LAST/Dataset/Filtered_Dataset.xlsx'
+annotation_path = '/content/drive/MyDrive/Bachelorprosjekt - Continental/LAST/Mask generation/merged_annotations_corrected_updated.xml'
+
+batch_size = 32
+num_epochs = 100
+learning_rate = 0.0005
+version = 112
+resnet_version = 34
+use_masks = False # Use masks to remove background 
+use_multi_angle_dataset = True # Use multi angle dataset
+use_filtered_dataset = False # Only images with depths between 3.5 and 8.5
+use_60_percent_width = True # Crops the images to 60% width, keeping the middle part.
+
+
+patience = 15 # Epochs before stopping to prevent overfitting
+figure_size = (10, 5) # Size of all generated plots
+gradcam_frequency = 5 # How many epochs between the gradcam visualization in console
+save_frequency = 2 # How often an epoch should be saved (first and best will always be saved)
+resolution = 1024 # Image size in pixel (images are square so width and height is same)
+
+if use_filtered_dataset == True:
+    labels_path = filtered_labels_path
+
+if use_multi_angle_dataset == True:
+    dataset_path = multi_angle_dataset_path
+
+# Load labels from Excel file
+labels_df = pd.read_excel(labels_path)
+
+# Function to get label for a specific image
+def get_label(image_name):
+    label = labels_df[labels_df['Bilde'] == f"{image_name}.jpg"]['Dybde (mm)'].values
+    if len(label) > 0:
+        return label[0]
+    else:
+        return None
+
+def parse_annotations(annotation_path):
+    tree = ET.parse(annotation_path)
+    root = tree.getroot()
+    annotations = {}
+
+    for image in root.findall('image'):
+        image_name = image.get('name')
+        polylines = []
+
+        for polyline in image.findall('polyline'):
+            points = polyline.get('points')
+            point_list = [tuple(map(float, p.split(','))) for p in points.split(';')]
+            polylines.append(point_list)
+
+        if polylines:  # Only add images with polylines
+            annotations[image_name] = polylines
+
+    return annotations
+
+def create_mask(image_size, polylines, thickness=100):
+    if not polylines:  # Check if polylines list is empty
+        return None
+
+    mask = np.zeros(image_size, dtype=np.uint8)
+    for polyline in polylines:
+        for i in range(len(polyline) - 1):
+            pt1 = tuple(map(int, polyline[i]))
+            pt2 = tuple(map(int, polyline[i + 1]))
+            mask = cv2.line(mask, pt1, pt2, color=1, thickness=thickness)
+    return mask
+
+# List all image files in dataset directory
+image_files = os.listdir(dataset_path)
+
+# Extract image names without extensions
+image_names = [os.path.splitext(file)[0] for file in image_files]
+
+# Split dataset into train, validation, and test sets
+train_names, temp_names = train_test_split(image_names, test_size=0.2, random_state=7)
+val_names, test_names = train_test_split(temp_names, test_size=0.5, random_state=7) # 15% validation, 15% test
+
+# Create dictionaries to store labels
+train_labels = {name: get_label(name) for name in train_names if get_label(name) is not None}
+val_labels = {name: get_label(name) for name in val_names if get_label(name) is not None}
+test_labels = {name: get_label(name) for name in test_names if get_label(name) is not None}
+masks = {}
+
+# Log missing labels
+missing_labels = [name for name in train_names + val_names + test_names if get_label(name) is None]
+if missing_labels:
+    print(f"Missing labels for {len(missing_labels)} images\n")
+else:
+    print("All labels were found\n")
+
+total_images = (len(image_files) - len(missing_labels))
+
+print(f"Total dataset size: {total_images}\n")
+print(f"Training: {len(train_labels)}")
+print(f"Validation: {len(val_labels)}")
+print(f"Test: {len(test_labels)}\n")
+
+class CustomDataset(Dataset):
+    def __init__(self, image_names, labels, dataset_path, transform=None, augmentations=None, masks=None):
+        self.image_names = image_names
+        self.labels = labels
+        self.dataset_path = dataset_path
+        self.transform = transform
+        self.augmentations = augmentations
+        self.masks = masks
+
+    def __len__(self):
+        return len(self.image_names)
+
+    def __getitem__(self, idx):
+        image_name = self.image_names[idx]
+        image_path = os.path.join(self.dataset_path, f"{image_name}.jpg")
+        image = Image.open(image_path).convert("RGB")
+        no_mask_counter = 0
+
+        # Get the dimensions of the image
+        width, height = image.size
+
+        if use_60_percent_width == True:
+            # Calculate the cropping coordinates for the middle 60% of the width
+            left = int(0.2 * width)
+            right = int(0.8 * width)
+            upper = 0
+            lower = height
+
+            # Crop the image
+            image = image.crop((left, upper, right, lower))
+
+            # Convert PIL image to numpy array
+            image_np = np.array(image)
+        else:
+            # Convert PIL image to numpy array without cropping
+            image_np = np.array(image)
+
+        # Only overlay the mask if it is provided
+        if self.masks and image_name in self.masks:
+            mask = self.masks[image_name]
+            if use_60_percent_width == True:
+                mask_resized = cv2.resize(mask, (width, height))
+                mask_cropped = mask_resized[upper:lower, left:right]  # Crop the mask
+                mask_final = cv2.resize(mask_cropped, (image_np.shape[1], image_np.shape[0]))  # Resize to match image size after cropping
+            else:
+                mask_final = cv2.resize(mask, (image_np.shape[1], image_np.shape[0]))  # Resize mask to match image size without cropping
+
+            # Make the masked area regular and the rest white
+            white_overlay = np.full_like(image_np, [255, 255, 255])
+            image_np[mask_final == 0] = white_overlay[mask_final == 0]  # Apply white where mask is not present
+        else:
+            # Log if the mask is not found
+            if self.masks and image_name not in self.masks:
+                no_mask_counter = no_mask_counter + 1
+
+        # Apply augmentations (if any)
+        if self.augmentations:
+            augmented = self.augmentations(image=image_np)
+            image_np = augmented['image']
+
+        # Convert numpy array back to PIL image for torchvision transforms
+        image = Image.fromarray(image_np)
+
+        # Apply final transforms (if any)
+        if self.transform:
+            image = self.transform(image)
+
+        label = self.labels[image_name]
+        return image, label
+
+
+# Define transformations for data preprocessing
+if use_60_percent_width == True:
+    transform = transforms.Compose([
+    transforms.Resize((resolution, int(resolution * 0.6))),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+])
+
+else: 
+    transform = transforms.Compose([
+    transforms.Resize((resolution, resolution)),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+])
+
+# Define augmentations
+augmentations = A.Compose([
+    A.HorizontalFlip(p=0.5),  # 50% chance of horizontal flip
+    A.VerticalFlip(p=0.5),    # 50% chance of vertical flip
+    A.Rotate(limit=10, p=0.5),  # 50% chance of random rotation up to 10 degrees
+    A.RandomBrightnessContrast(brightness_limit=0.1, p=0.5),  # 50% chance of random brightness adjustment
+    A.RandomBrightnessContrast(contrast_limit=0.1, p=0.5), # 50% chance of random contrast adjustment
+])
+
+# Create custom datasets
+if use_masks == True:
+    train_dataset = CustomDataset(list(train_labels.keys()), train_labels, dataset_path, transform=transform, augmentations=augmentations, masks=masks)
+    use_masks = "Yes"
+else:
+    train_dataset = CustomDataset(list(train_labels.keys()), train_labels, dataset_path, transform=transform, augmentations=augmentations)
+    use_masks = "No"
+val_dataset = CustomDataset(list(val_labels.keys()), val_labels, dataset_path, transform=transform)
+test_dataset = CustomDataset(list(test_labels.keys()), test_labels, dataset_path, transform=transform)
+
+# Define data loaders
+train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+val_loader = DataLoader(val_dataset, batch_size=batch_size)
+test_loader = DataLoader(test_dataset, batch_size=batch_size)
+
+annotations = parse_annotations(annotation_path)
+
+for image_name in annotations.keys():
+    polylines = annotations[image_name]
+    if use_60_percent_width == True:
+        mask = create_mask((resolution, resolution), polylines)  # height, width
+    else:
+        mask = create_mask((int(resolution * 0.6), resolution), polylines)  # height, width
+
+    if mask is not None:  # Only add the mask if it is not None
+        masks[os.path.splitext(image_name)[0]] = mask
+
+# Check if GPU is available
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+if torch.cuda.is_available():
+    gpu_name = torch.cuda.get_device_name(torch.cuda.current_device())
+    print(f"Currently utilizing: {gpu_name}\n")
+else:
+    print(f"Currently utilizing: CPU\n")
+
+# Define CNN model architecture using ResNet as feature extractor
+class CNNResNet(nn.Module):
+    def __init__(self):
+        super(CNNResNet, self).__init__()
+
+        model_function = getattr(torchvision.models, f'resnet{resnet_version}')
+        model_weights = getattr(torchvision.models, f'ResNet{resnet_version}_Weights').IMAGENET1K_V1
+        resnet = model_function(weights=model_weights)
+        # Extract features from ResNet
+        self.resnet_features = nn.Sequential(*list(resnet.children())[:-1])
+        # Add additional layers for regression
+        if resnet_version in [18, 34]:
+            self.fc = nn.Linear(512, 1)
+        elif resnet_version in [50]:
+            self.fc = nn.Linear(2048, 1)
+        else:
+            print("Unsupported resnet model chosen")
+
+    def forward(self, x):
+        # Extract features using ResNet
+        features = self.resnet_features(x)
+        # Flatten the features
+        features = torch.flatten(features, 1)
+        # Apply additional layers for regression
+        output = self.fc(features)
+        return output
+
+# Initialize model
+model = CNNResNet()
+
+# Move model to device
+model = model.to(device)
+
+# Define loss function and optimizer
+criterion = nn.MSELoss()
+optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=10, verbose=True)
+
+# Initialize lists to store training and validation loss values and average error
+train_losses = []
+val_losses = []
+avg_train_errors = []
+avg_val_errors = []
+val_errors = []
+val_percentage_errors = []
+patience_counter = 0
+best_val_loss = float('inf')
+
+for epoch in range(num_epochs):
+    model.train()
+    epoch_train_loss = 0.0
+    train_errors = []
+
+    # Save and visualize the first 8 images from the test set
+    if epoch == 0:
+        images, labels = next(iter(train_loader))
+        images, labels = images[:8], labels[:8]
+
+        plt.figure(figsize=(15, 5))
+        for i in range(8):
+            image = images[i].permute(1, 2, 0).cpu().numpy()
+            mean = np.array([0.485, 0.456, 0.406])
+            std = np.array([0.229, 0.224, 0.225])
+            image = std * image + mean
+            image = np.clip(image, 0, 1)
+
+            plt.subplot(1, 8, i + 1)
+            plt.imshow(image)
+            plt.title(f"{labels[i].item():.2f}")
+            plt.axis('off')
+
+        plt.show()
+
+    for inputs, labels in train_loader:
+        inputs, labels = inputs.to(device), labels.float().to(device)
+        optimizer.zero_grad()
+        outputs = model(inputs)
+        loss = criterion(outputs.squeeze(), labels)
+        loss.backward()
+        optimizer.step()
+        epoch_train_loss += loss.item() * inputs.size(0)
+        train_errors.extend((labels - outputs.squeeze()).detach().cpu().numpy())
+
+    epoch_train_loss /= len(train_loader.dataset)
+    avg_train_error = np.mean(np.abs(train_errors))
+    train_losses.append(epoch_train_loss)
+    avg_train_errors.append(avg_train_error)
+
+    # Validation step
+    model.eval()
+    epoch_val_loss = 0.0
+    val_errors = []
+    val_percentage_errors = []
+
+    with torch.no_grad():
+        for inputs, labels in val_loader:
+            inputs, labels = inputs.to(device), labels.float().to(device)
+            outputs = model(inputs)
+            loss = criterion(outputs.squeeze(), labels)
+            epoch_val_loss += loss.item() * inputs.size(0)
+            errors = abs(labels - outputs.squeeze()).cpu().numpy()
+            val_errors.extend(errors)
+
+            # Safely calculate percentage errors
+            safe_labels = labels.cpu().numpy() + 1e-8  # Avoid division by zero
+            percentage_errors = (errors / safe_labels) * 100
+            val_percentage_errors.extend(percentage_errors)
+
+    epoch_val_loss /= len(val_loader.dataset)
+    avg_val_error = np.mean(val_errors)
+    avg_val_percentage_error = np.mean(val_percentage_errors)
+    val_losses.append(epoch_val_loss)
+    avg_val_errors.append(avg_val_error)
+
+    scheduler.step(epoch_val_loss)
+
+    print(f"Epoch {epoch+1}/{num_epochs}: Train Loss: {epoch_train_loss:.2f}, Val Loss: {epoch_val_loss:.2f}, Train Error: {avg_train_error:.2f}, Val Error: {avg_val_error:.2f}")
+
+    # Early stopping
+    if epoch_val_loss < best_val_loss:
+        best_val_loss = epoch_val_loss
+        patience_counter = 0
+        # Ensure the directory exists before saving the model
+        best_model_path = f'/content/drive/MyDrive/Bachelorprosjekt - Continental/LAST/Generated models/Resnet_v{version}/.pth files/Resnet18_v{version}_best.pth'
+        os.makedirs(os.path.dirname(best_model_path), exist_ok=True)
+        torch.save(model.state_dict(), best_model_path)
+    else:
+        patience_counter += 1
+        if patience_counter >= patience:
+            print("Early stopping triggered\n")
+            break
+
+    # Guided Grad-CAM Visualization
+    convlayer = list(list(list(list(model.children())[0].children())[-3].children())[-1].children())[-3]
+    guided_gc = GuidedGradCam(model, convlayer)
+
+    fig, axs = plt.subplots(2, 8, figsize=(20, 8))  # Adjust size as needed
+    for i, ax in enumerate(axs.flat):
+        model_input, _ = val_dataset[i]
+        model_input = model_input.requires_grad_().to(device).unsqueeze(0)
+
+        attribution = guided_gc.attribute(model_input, target=0)
+        attr = np.transpose(attribution.squeeze().cpu().detach().numpy(), (1, 2, 0))
+        original_img = np.transpose(model_input.squeeze().cpu().detach().numpy(), (1, 2, 0))
+
+        # Visualize the attribution in the specified subplot
+        _, _ = viz.visualize_image_attr(
+            attr=attr,
+            original_image=original_img,
+            method='blended_heat_map',
+            sign='absolute_value',
+            plt_fig_axis=(fig, ax),
+            alpha_overlay=0.5,
+            outlier_perc=20,
+            show_colorbar=True,
+            use_pyplot=False
+        )
+        ax.set_xticks([])  # Remove x-axis tick marks
+        ax.set_yticks([])  # Remove y-axis tick marks
+        ax.axis('off')  # Hide the axes
+
+        gradcam_path = f'/content/drive/MyDrive/Bachelorprosjekt - Continental/LAST/Generated models/Resnet_v{version}/GradCam/epoch_{epoch+1}.png'
+        os.makedirs(os.path.dirname(gradcam_path), exist_ok=True)
+        plt.savefig(gradcam_path)
+
+    if epoch == 0 or epoch == (num_epochs - 1) or epoch % (gradcam_frequency - 1) == 0:
+        plt.show()
+        print()
+
+    if epoch == 0 or epoch == (num_epochs - 1) or epoch % (save_frequency - 1) == 0:
+        model_save_path = f'/content/drive/MyDrive/Bachelorprosjekt - Continental/LAST/Generated models/Resnet_v{version}/.pth files/Resnet18_epoch_{epoch + 1}.pth'
+        os.makedirs(os.path.dirname(model_save_path), exist_ok=True)
+        torch.save(model.state_dict(), model_save_path)
+
+    plt.close()
+
+# Plotting the training and validation loss graph and average errors
+plt.figure(figsize=(figure_size[0] * 1.5, figure_size[1] * 1.5))
+plt.subplot(1, 2, 1)
+plt.plot(range(1, epoch+2), train_losses, label='Training Loss')
+plt.plot(range(1, epoch+2), val_losses, label='Validation Loss')
+plt.title('Training and Validation Loss over Epochs')
+plt.xlabel('Epochs')
+plt.ylabel('Loss')
+plt.grid(True)
+plt.legend()
+
+plt.subplot(1, 2, 2)
+plt.plot(range(1, epoch+2), avg_train_errors, label='Average Training Error')
+plt.plot(range(1, epoch+2), avg_val_errors, label='Average Validation Error')
+plt.title('Average Error over Epochs')
+plt.xlabel('Epochs')
+plt.ylabel('Average Error')
+plt.grid(True)
+plt.legend()
+
+plt.savefig(f'/content/drive/MyDrive/Bachelorprosjekt - Continental/LAST/Generated models/Resnet_v{version}/v{version}_LossesPlot.png')
+plt.show()
+plt.close()
+print()
+
+# Evaluation on the test set
+model.eval()
+test_loss = 0.0
+actual_depth = []
+predicted_depth = []
+signed_residuals = []
+percentage_residuals = []  # List to store percentage residuals
+
+with torch.no_grad():
+    for inputs, labels in test_loader:
+        inputs, labels = inputs.to(device), labels.float().to(device)
+        outputs = model(inputs)
+        loss = criterion(outputs.squeeze(), labels)
+        test_loss += loss.item() * inputs.size(0)
+        actual_labels = labels.cpu().numpy()  # Get actual values
+        predicted_labels = outputs.squeeze().detach().cpu().numpy()  # Get predicted values
+        actual_depth.extend(actual_labels)
+        predicted_depth.extend(predicted_labels)
+
+        # Calculate signed residuals
+        current_signed_residuals = actual_labels - predicted_labels
+        signed_residuals.extend(current_signed_residuals)  # For signed residuals
+
+        # Safely calculate percentage residuals
+        safe_labels = actual_labels + 1e-8  # Avoid division by zero
+        percentage_residuals.extend((abs(current_signed_residuals) / safe_labels) * 100)
+
+test_loss /= len(test_loader.dataset)
+practical_accuracy = np.mean(signed_residuals)  # This can be negative or positive
+avg_percentage_residual = np.mean(percentage_residuals)
+percentage_accuracy = 100 - avg_percentage_residual
+practical_accuracy = - practical_accuracy
+
+# Scatter plot for actual vs predicted depth with diagonal line
+plt.figure(figsize=(figure_size))
+plt.scatter(actual_depth, predicted_depth, alpha=0.5, label='Data Points')
+plt.plot([min(actual_depth), max(actual_depth)], [min(actual_depth), max(actual_depth)], color='red', label='Ideal Fit')
+plt.title('Actual vs Predicted Depth (closer to line == better)')
+plt.xlabel('Actual Depth (mm)')
+plt.ylabel('Predicted Depth (mm)')
+plt.legend()
+plt.grid(True)
+plt.savefig(f'/content/drive/MyDrive/Bachelorprosjekt - Continental/LAST/Generated models/Resnet_v{version}/v{version}_ScatterPlot.png')
+plt.show()
+plt.close()
+print()
+
+# Histogram of residuals
+plt.figure(figsize=(figure_size))
+plt.hist(signed_residuals, bins=20, alpha=0.7, color='blue', edgecolor='black')
+plt.title('Histogram of difference (Actual - Predicted)')
+plt.xlabel('Difference (mm)')
+plt.ylabel('Frequency')
+plt.grid(True)
+plt.savefig(f'/content/drive/MyDrive/Bachelorprosjekt - Continental/LAST/Generated models/Resnet_v{version}/v{version}_Histogram.png')
+plt.show()
+plt.close()
+print()
+
+# Print results
+print(f'Test Loss: {test_loss:.2f} (lower is better)\n')
+print("Testing set analytics")
+print(f'Average estimation difference (mm): {practical_accuracy:.2f} mm (positive means overestimate, negative means underestimate)')
+print(f'Accuracy (%): {percentage_accuracy:.2f}% (higher is better)\n')
+
+print(f"ResNet version: {resnet_version} ⏐ Learning rate: {learning_rate} ⏐ Resolution: {resolution}x{resolution}\n ⏐ Used masks: {use_masks}\n")
+
+# Prepare DataFrame
+loss_data = pd.DataFrame({
+    'Epoch': range(1, epoch + 2),
+    'Training Loss': train_losses,
+    'Validation Loss': val_losses,
+    'Average Train Error (mm)': avg_train_errors,
+    'Average Validation Error (mm)': avg_val_errors,
+    'Validation Error (%)': avg_val_percentage_error,  # List of average percentage errors per epoch for validation
+})
+
+excel_path = f'/content/drive/MyDrive/Bachelorprosjekt - Continental/LAST/Generated models/Resnet_v{version}/v{version}_loss_data.xlsx'
+
+loss_data.to_excel(excel_path, index=False)
+print(f"Loss data saved to {excel_path}\n")
+
+# Prediction Example
+'''test_image_path = r'/content/drive/MyDrive/Bachelorprosjekt - Continental/LAST/Dataset/SA - validation/IMG_2394.jpg'
+test_image = Image.open(test_image_path)
+test_image = transform(test_image)  # Apply the same transformations
+test_image_batch = test_image.unsqueeze(0)
+
+with torch.no_grad():
+    depth_prediction = model(test_image_batch.to(device))
+    depth_prediction = depth_prediction.item()
+    print(f'Predicted depth: {depth_prediction}')'''
