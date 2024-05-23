@@ -1,0 +1,635 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B70748802BFF81AC00387542 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B707487F2BFF81AC00387542 /* AppDelegate.swift */; };
+		B70748822BFF81AC00387542 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70748812BFF81AC00387542 /* SceneDelegate.swift */; };
+		B70748842BFF81AC00387542 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70748832BFF81AC00387542 /* ViewController.swift */; };
+		B70748872BFF81AC00387542 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = B70748862BFF81AC00387542 /* Base */; };
+		B70748892BFF81AE00387542 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B70748882BFF81AE00387542 /* Assets.xcassets */; };
+		B707488C2BFF81AE00387542 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = B707488B2BFF81AE00387542 /* Base */; };
+		B70748972BFF81AE00387542 /* Continental_TireDepthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70748962BFF81AE00387542 /* Continental_TireDepthTests.swift */; };
+		B70748A12BFF81AE00387542 /* Continental_TireDepthUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70748A02BFF81AE00387542 /* Continental_TireDepthUITests.swift */; };
+		B70748A32BFF81AE00387542 /* Continental_TireDepthUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70748A22BFF81AE00387542 /* Continental_TireDepthUITestsLaunchTests.swift */; };
+		B70748B02BFF83C900387542 /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70748AF2BFF83C900387542 /* History.swift */; };
+		B70748B22BFF85AF00387542 /* DepthEstimator.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = B70748B12BFF85AF00387542 /* DepthEstimator.mlmodel */; };
+		B70748B42BFF868E00387542 /* HistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70748B32BFF868E00387542 /* HistoryViewController.swift */; };
+		B70748B82BFF99E100387542 /* PopoverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70748B72BFF99E100387542 /* PopoverViewController.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B70748932BFF81AE00387542 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B70748742BFF81AC00387542 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B707487B2BFF81AC00387542;
+			remoteInfo = "Continental TireDepth";
+		};
+		B707489D2BFF81AE00387542 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B70748742BFF81AC00387542 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B707487B2BFF81AC00387542;
+			remoteInfo = "Continental TireDepth";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		B707487C2BFF81AC00387542 /* Continental TireDepth.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Continental TireDepth.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B707487F2BFF81AC00387542 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		B70748812BFF81AC00387542 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		B70748832BFF81AC00387542 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		B70748862BFF81AC00387542 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		B70748882BFF81AE00387542 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B707488B2BFF81AE00387542 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		B707488D2BFF81AE00387542 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B70748922BFF81AE00387542 /* Continental TireDepthTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Continental TireDepthTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B70748962BFF81AE00387542 /* Continental_TireDepthTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Continental_TireDepthTests.swift; sourceTree = "<group>"; };
+		B707489C2BFF81AE00387542 /* Continental TireDepthUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Continental TireDepthUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B70748A02BFF81AE00387542 /* Continental_TireDepthUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Continental_TireDepthUITests.swift; sourceTree = "<group>"; };
+		B70748A22BFF81AE00387542 /* Continental_TireDepthUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Continental_TireDepthUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		B70748AF2BFF83C900387542 /* History.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = History.swift; sourceTree = "<group>"; };
+		B70748B12BFF85AF00387542 /* DepthEstimator.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = DepthEstimator.mlmodel; path = ../../../../Downloads/DepthEstimator.mlmodel; sourceTree = "<group>"; };
+		B70748B32BFF868E00387542 /* HistoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewController.swift; sourceTree = "<group>"; };
+		B70748B72BFF99E100387542 /* PopoverViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverViewController.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B70748792BFF81AC00387542 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B707488F2BFF81AE00387542 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B70748992BFF81AE00387542 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		B70748732BFF81AC00387542 = {
+			isa = PBXGroup;
+			children = (
+				B707487E2BFF81AC00387542 /* Continental TireDepth */,
+				B70748952BFF81AE00387542 /* Continental TireDepthTests */,
+				B707489F2BFF81AE00387542 /* Continental TireDepthUITests */,
+				B707487D2BFF81AC00387542 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		B707487D2BFF81AC00387542 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B707487C2BFF81AC00387542 /* Continental TireDepth.app */,
+				B70748922BFF81AE00387542 /* Continental TireDepthTests.xctest */,
+				B707489C2BFF81AE00387542 /* Continental TireDepthUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B707487E2BFF81AC00387542 /* Continental TireDepth */ = {
+			isa = PBXGroup;
+			children = (
+				B70748B12BFF85AF00387542 /* DepthEstimator.mlmodel */,
+				B707487F2BFF81AC00387542 /* AppDelegate.swift */,
+				B70748812BFF81AC00387542 /* SceneDelegate.swift */,
+				B70748832BFF81AC00387542 /* ViewController.swift */,
+				B70748AF2BFF83C900387542 /* History.swift */,
+				B70748852BFF81AC00387542 /* Main.storyboard */,
+				B70748B72BFF99E100387542 /* PopoverViewController.swift */,
+				B70748B32BFF868E00387542 /* HistoryViewController.swift */,
+				B70748882BFF81AE00387542 /* Assets.xcassets */,
+				B707488A2BFF81AE00387542 /* LaunchScreen.storyboard */,
+				B707488D2BFF81AE00387542 /* Info.plist */,
+			);
+			path = "Continental TireDepth";
+			sourceTree = "<group>";
+		};
+		B70748952BFF81AE00387542 /* Continental TireDepthTests */ = {
+			isa = PBXGroup;
+			children = (
+				B70748962BFF81AE00387542 /* Continental_TireDepthTests.swift */,
+			);
+			path = "Continental TireDepthTests";
+			sourceTree = "<group>";
+		};
+		B707489F2BFF81AE00387542 /* Continental TireDepthUITests */ = {
+			isa = PBXGroup;
+			children = (
+				B70748A02BFF81AE00387542 /* Continental_TireDepthUITests.swift */,
+				B70748A22BFF81AE00387542 /* Continental_TireDepthUITestsLaunchTests.swift */,
+			);
+			path = "Continental TireDepthUITests";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		B707487B2BFF81AC00387542 /* Continental TireDepth */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B70748A62BFF81AE00387542 /* Build configuration list for PBXNativeTarget "Continental TireDepth" */;
+			buildPhases = (
+				B70748782BFF81AC00387542 /* Sources */,
+				B70748792BFF81AC00387542 /* Frameworks */,
+				B707487A2BFF81AC00387542 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Continental TireDepth";
+			productName = "Continental TireDepth";
+			productReference = B707487C2BFF81AC00387542 /* Continental TireDepth.app */;
+			productType = "com.apple.product-type.application";
+		};
+		B70748912BFF81AE00387542 /* Continental TireDepthTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B70748A92BFF81AE00387542 /* Build configuration list for PBXNativeTarget "Continental TireDepthTests" */;
+			buildPhases = (
+				B707488E2BFF81AE00387542 /* Sources */,
+				B707488F2BFF81AE00387542 /* Frameworks */,
+				B70748902BFF81AE00387542 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B70748942BFF81AE00387542 /* PBXTargetDependency */,
+			);
+			name = "Continental TireDepthTests";
+			productName = "Continental TireDepthTests";
+			productReference = B70748922BFF81AE00387542 /* Continental TireDepthTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		B707489B2BFF81AE00387542 /* Continental TireDepthUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B70748AC2BFF81AE00387542 /* Build configuration list for PBXNativeTarget "Continental TireDepthUITests" */;
+			buildPhases = (
+				B70748982BFF81AE00387542 /* Sources */,
+				B70748992BFF81AE00387542 /* Frameworks */,
+				B707489A2BFF81AE00387542 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B707489E2BFF81AE00387542 /* PBXTargetDependency */,
+			);
+			name = "Continental TireDepthUITests";
+			productName = "Continental TireDepthUITests";
+			productReference = B707489C2BFF81AE00387542 /* Continental TireDepthUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B70748742BFF81AC00387542 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1540;
+				LastUpgradeCheck = 1540;
+				TargetAttributes = {
+					B707487B2BFF81AC00387542 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+					B70748912BFF81AE00387542 = {
+						CreatedOnToolsVersion = 15.4;
+						TestTargetID = B707487B2BFF81AC00387542;
+					};
+					B707489B2BFF81AE00387542 = {
+						CreatedOnToolsVersion = 15.4;
+						TestTargetID = B707487B2BFF81AC00387542;
+					};
+				};
+			};
+			buildConfigurationList = B70748772BFF81AC00387542 /* Build configuration list for PBXProject "Continental TireDepth" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = B70748732BFF81AC00387542;
+			productRefGroup = B707487D2BFF81AC00387542 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B707487B2BFF81AC00387542 /* Continental TireDepth */,
+				B70748912BFF81AE00387542 /* Continental TireDepthTests */,
+				B707489B2BFF81AE00387542 /* Continental TireDepthUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B707487A2BFF81AC00387542 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B70748892BFF81AE00387542 /* Assets.xcassets in Resources */,
+				B707488C2BFF81AE00387542 /* Base in Resources */,
+				B70748872BFF81AC00387542 /* Base in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B70748902BFF81AE00387542 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B707489A2BFF81AE00387542 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B70748782BFF81AC00387542 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B70748842BFF81AC00387542 /* ViewController.swift in Sources */,
+				B70748B22BFF85AF00387542 /* DepthEstimator.mlmodel in Sources */,
+				B70748B82BFF99E100387542 /* PopoverViewController.swift in Sources */,
+				B70748802BFF81AC00387542 /* AppDelegate.swift in Sources */,
+				B70748B42BFF868E00387542 /* HistoryViewController.swift in Sources */,
+				B70748B02BFF83C900387542 /* History.swift in Sources */,
+				B70748822BFF81AC00387542 /* SceneDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B707488E2BFF81AE00387542 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B70748972BFF81AE00387542 /* Continental_TireDepthTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B70748982BFF81AE00387542 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B70748A32BFF81AE00387542 /* Continental_TireDepthUITestsLaunchTests.swift in Sources */,
+				B70748A12BFF81AE00387542 /* Continental_TireDepthUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B70748942BFF81AE00387542 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B707487B2BFF81AC00387542 /* Continental TireDepth */;
+			targetProxy = B70748932BFF81AE00387542 /* PBXContainerItemProxy */;
+		};
+		B707489E2BFF81AE00387542 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B707487B2BFF81AC00387542 /* Continental TireDepth */;
+			targetProxy = B707489D2BFF81AE00387542 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		B70748852BFF81AC00387542 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B70748862BFF81AC00387542 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		B707488A2BFF81AE00387542 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B707488B2BFF81AE00387542 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		B70748A42BFF81AE00387542 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		B70748A52BFF81AE00387542 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B70748A72BFF81AE00387542 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2Z4Z6CFWQ9;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Continental TireDepth/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Dybdemåler";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "fehzan.Continental-TireDepth";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		B70748A82BFF81AE00387542 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Continental TireDepth/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Dybdemåler";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "fehzan.Continental-TireDepth";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		B70748AA2BFF81AE00387542 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "fehzan.Continental-TireDepthTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Continental TireDepth.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Continental TireDepth";
+			};
+			name = Debug;
+		};
+		B70748AB2BFF81AE00387542 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "fehzan.Continental-TireDepthTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Continental TireDepth.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Continental TireDepth";
+			};
+			name = Release;
+		};
+		B70748AD2BFF81AE00387542 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "fehzan.Continental-TireDepthUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Continental TireDepth";
+			};
+			name = Debug;
+		};
+		B70748AE2BFF81AE00387542 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "fehzan.Continental-TireDepthUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Continental TireDepth";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		B70748772BFF81AC00387542 /* Build configuration list for PBXProject "Continental TireDepth" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B70748A42BFF81AE00387542 /* Debug */,
+				B70748A52BFF81AE00387542 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B70748A62BFF81AE00387542 /* Build configuration list for PBXNativeTarget "Continental TireDepth" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B70748A72BFF81AE00387542 /* Debug */,
+				B70748A82BFF81AE00387542 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B70748A92BFF81AE00387542 /* Build configuration list for PBXNativeTarget "Continental TireDepthTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B70748AA2BFF81AE00387542 /* Debug */,
+				B70748AB2BFF81AE00387542 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B70748AC2BFF81AE00387542 /* Build configuration list for PBXNativeTarget "Continental TireDepthUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B70748AD2BFF81AE00387542 /* Debug */,
+				B70748AE2BFF81AE00387542 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = B70748742BFF81AC00387542 /* Project object */;
+}
