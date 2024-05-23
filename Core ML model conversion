@@ -1,0 +1,57 @@
+import torch
+import torchvision
+import coremltools as ct
+from torch import nn
+
+# Define the CNNResNet class (as you have in your training code)
+class CNNResNet(nn.Module):
+    def __init__(self):
+        super(CNNResNet, self).__init__()
+
+        # Use resnet34
+        resnet_version = 34
+        resolution = 1024
+
+        model_function = getattr(torchvision.models, f'resnet{resnet_version}')
+        model_weights = getattr(torchvision.models, f'ResNet{resnet_version}_Weights').IMAGENET1K_V1
+        resnet = model_function(weights=model_weights)
+        # Extract features from ResNet
+        self.resnet_features = nn.Sequential(*list(resnet.children())[:-1])
+        # Add additional layers for regression
+        if resnet_version in [18, 34]:
+            self.fc = nn.Linear(512, 1)
+        elif resnet_version == 50:
+            self.fc = nn.Linear(2048, 1)
+        else:
+            print("Unsupported resnet model chosen")
+
+    def forward(self, x):
+        # Extract features using ResNet
+        features = self.resnet_features(x)
+        # Flatten the features
+        features = torch.flatten(features, 1)
+        # Apply additional layers for regression
+        output = self.fc(features)
+        return output
+
+# Load your trained model weights
+model = CNNResNet()
+model.load_state_dict(torch.load('/content/drive/MyDrive/Bachelorprosjekt - Continental/LAST/Generated models/Resnet_v110/.pth files/Resnet18_v110_best.pth'))
+model.eval()
+
+# Example input tensor (for tracing)
+resolution = 1024  # Ensure resolution is 1024x1024
+example_input = torch.rand(1, 3, resolution, resolution)
+
+# Convert to TorchScript
+traced_model = torch.jit.trace(model, example_input)
+
+# Convert the TorchScript model to Core ML model with 'neuralnetwork' target
+coreml_model = ct.convert(
+    traced_model,
+    inputs=[ct.ImageType(name="input", shape=example_input.shape, scale=1/255.0, bias=[-0.485, -0.456, -0.406], color_layout=ct.colorlayout.RGB)],
+    convert_to="neuralnetwork"  # Specify the conversion target to 'neuralnetwork'
+)
+
+# Save the Core ML model with .mlmodel extension
+coreml_model.save('/content/drive/MyDrive/Bachelorprosjekt - Continental/LAST/DepthEstimator.mlmodel')
